@@ -8,7 +8,7 @@ class ProductCategorySerializer(serializers.ModelSerializer):
     fields = '__all__'
     
 class ProductSerializer(serializers.ModelSerializer):
-  category = serializers.SlugRelatedField(slug_field='name', read_only=True)
+  category = serializers.SlugRelatedField(slug_field='name', queryset=ProductCategory.objects.all())
 
   class Meta:
     model = Product
