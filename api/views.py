@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action, authentication_classes, permission_classes
 from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -21,7 +22,7 @@ class ProductModelViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [SearchFilter]
-    search_fields = ['name', 'category']
+    search_fields = ['name']
     
     @action(detail=False, methods=['get'])
     def filter_products(self, request):
@@ -43,7 +44,6 @@ class UserViewSet(ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     pagination_class = LargeResultsSetPagination
     filter_backends = [filters.SearchFilter]
-
     search_fields = ['username']
     
     @action(detail=False, methods=['get'])

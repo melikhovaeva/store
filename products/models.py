@@ -1,11 +1,13 @@
 from django.db import models
 
 from users.models import User
+from simple_history.models import HistoricalRecords
 
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(null=True, blank=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'category'
@@ -22,6 +24,7 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='products_images', null=True, blank=True)
     category = models.ForeignKey(to=ProductCategory, on_delete=models.CASCADE)
+    history = HistoricalRecords()
 
     class Meta:
       verbose_name = 'product'
