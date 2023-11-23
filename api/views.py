@@ -2,13 +2,11 @@ from django.db.models import Q
 from django.utils.dateparse import parse_duration
 from rest_framework import generics, status, filters
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action, authentication_classes, permission_classes
-from rest_framework.filters import SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import get_object_or_404
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from rest_framework.generics import get_object_or_404
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from products.models import Product, Basket
@@ -21,21 +19,25 @@ from api.pagination import LargeResultsSetPagination
 class ProductModelViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter,  OrderingFilter]
     search_fields = ['name']
+    ordering_fields = ['category', 'price']
     
     @action(detail=False, methods=['get'])
     def filter_products(self, request):
-        price_gt = self.request.query_params.get('price_gt')
-        price_lt = self.request.query_params.get('price_lt')
-        if price_gt is not None and price_lt is not None:
            queryset = Product.objects.filter(
-               Q(price__gte=price_gt) & ~Q(price__gte=int(price_lt)-1) | Q(price=price_lt)
+               Q(price__gte=1000) & ~Q(price__gte=2400) | Q(category='2')
            )
            serializer = self.get_serializer(queryset, many=True)
            return Response(serializer.data)
-        else:
-            return self.list(request)
+       
+    @action(detail=True, methods=['post'])
+    def add_product(self, request):        
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():            
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
@@ -43,8 +45,9 @@ class UserViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     pagination_class = LargeResultsSetPagination
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['username']
+    ordering_fields = ['username', 'is_staff']
     
     @action(detail=False, methods=['get'])
     def filter_user(self, request):
