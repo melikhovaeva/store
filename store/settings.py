@@ -41,10 +41,11 @@ INSTALLED_APPS = [
     'simple_history',
     'import_export',
     'crispy_forms',
+    'django_filters',
     
     'products',
     'users',
-    'api'
+    'api', 
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
