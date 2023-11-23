@@ -10,10 +10,10 @@ from products.serializers import ProductSerializer, BasketSerializer
 class ProductModelViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    def get_permissions(self):
-        if self.action in ('create', 'update', 'destroy'):
-            self.permission_classes = (IsAdminUser,)
-        return super(ProductModelViewSet, self).get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ('create', 'update', 'destroy'):
+    #         self.permission_classes = (IsAdminUser,)
+    #     return super(ProductModelViewSet, self).get_permissions()
 
 
 class BasketModelViewSet(ModelViewSet):
