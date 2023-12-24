@@ -23,7 +23,7 @@ class ProductModelViewSet(ModelViewSet):
     search_fields = ['name']
     ordering_fields = ['category', 'price']
     
-    @action(detail=False, methods=['get'])
+    @action(detail=True, methods=['get'], url_path='product')
     def filter_products(self, request):
            queryset = Product.objects.filter(
                Q(price__gte=1000) & ~Q(price__gte=2400) | Q(category='2')
@@ -31,13 +31,16 @@ class ProductModelViewSet(ModelViewSet):
            serializer = self.get_serializer(queryset, many=True)
            return Response(serializer.data)
        
-    @action(detail=True, methods=['post'])
-    def add_product(self, request):        
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():            
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @action(detail=False, methods=['post', 'get'])
+    def add_product(self, request):
+        if request.method == 'POST':
+            serializer = ProductSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        elif request.method == 'GET':
+            return Response("GET для add_product")
     
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
