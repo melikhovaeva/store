@@ -1,5 +1,5 @@
 from django.contrib import admin
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 
@@ -8,18 +8,26 @@ from products.models import ProductCategory, Product, Basket
 admin.site.register(ProductCategory)
 
 class ProductResource(resources.ModelResource):
+    id = fields.Field(column_name='ID', attribute='id')
+    name = fields.Field(column_name='title', attribute='name')    
+    description = fields.Field(column_name='description', attribute='description')
+    price = fields.Field(column_name='price', attribute='price')    
+    quantity = fields.Field(column_name='quantity', attribute='quantity')
+    category = fields.Field(column_name='category', attribute='category')
     class Meta:
         model = Product
-        fields = ('name', 'description', 'price', 'quantity', 'category')
+        fields = ('id', 'name', 'description', 'price', 'quantity', 'category')
+        export_order = ('id', 'name', 'description', 'price', 'quantity', 'category')        
+        batch_size = 50
 
     def get_export_queryset(self, queryset):
-        return queryset.filter(price__gte=2000)
+        return queryset.filter(price__gt=1900)
 
     def dehydrate_price(self, product):
-        return f"${product.price}"
+        return f"{product.price} руб"
 
-    def get_price(self, value):
-        return float(value.replace('rub', '').replace(',', ''))
+    def get_queryset(self):    
+        return Product.objects.order_by('id')
     
 class BasketResource(resources.ModelResource):
     class Meta:
