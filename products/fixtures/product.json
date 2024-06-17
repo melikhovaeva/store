@@ -1,0 +1,32 @@
+[
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "Product 1",
+      "description": "This is the first product",
+      "price": 19.99,
+      "category": 1
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "Product 2",
+      "description": "This is the second product",
+      "price": 24.99,
+      "category": 2
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "Product 3",
+      "description": "This is the third product",
+      "price": 14.99,
+      "category": 3
+    }
+  }
+]
