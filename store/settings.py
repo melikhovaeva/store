@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'simple_history',
     'import_export',
+    'drf_yasg',
     'crispy_forms',
     'django_filters',
-    
     'products',
     'users',
     'api', 
