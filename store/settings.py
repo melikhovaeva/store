@@ -17,7 +17,6 @@ from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = 'django-insecure-7=i1$@=i2om1^a!dgg+m_!jdxl6i(-0qn+^k^pb$*zs9dksvdc
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -48,7 +46,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'products',
     'users',
-    'api', 
+    'api',
+    'cache_log'
 ]
 
 MIDDLEWARE = [
@@ -61,6 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'cache_log.middleware.LoggingMiddleware'
 ]
 
 ROOT_URLCONF = 'store.urls'
@@ -83,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'store.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -93,7 +92,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -113,7 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -124,7 +121,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -168,9 +164,14 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULE = {
     'send-weekly-best-products-email': {
         'task': 'products.tasks.weekly_best_products_email_task',
-        # 'schedule': crontab(hour=0, minute=0, day_of_week='mon'),  # Every Monday at midnight
-        'schedule': crontab(minute='*/5'),  # Every 5 min
+        'schedule': crontab(hour=0, minute=0, day_of_week='mon'),  # Every Monday at midnight
+        # 'schedule': crontab(minute='*/5'),  # Every 5 min
     },
+
+    'log': {
+        'task': 'cache_log.tasks.save_cache_log_task',
+        'schedule': crontab(minute='*/1'),
+    }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -179,3 +180,13 @@ EMAIL_PORT = 1025
 EMAIL_HOST_USER = 'store@gmail.com'
 EMAIL_HOST_PASSWORD = ''
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    },
+
+}
