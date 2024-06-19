@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  store:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: website
+    stdin_open: true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/usr/src/app/
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - redis
+    networks:
+      - store-net
+  redis:
+    image: redis:alpine
+    hostname: redis
+    networks:
+      - store-net
+    ports:
+      - "6379:6379"
+networks:
+  store-net:
