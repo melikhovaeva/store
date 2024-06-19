@@ -64,3 +64,4 @@ pylint==3.2.3
 pylint-django==2.5.5
 drf-yasg==1.21.7
 django-crispy-forms==2.2
+django-allauth==0.63.3

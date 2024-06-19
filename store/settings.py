@@ -44,6 +44,14 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_filters',
     'django_celery_beat',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.vk',
+    'social_django',
+
     'products',
     'users',
     'api',
@@ -60,7 +68,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    'cache_log.middleware.LoggingMiddleware'
+    'cache_log.middleware.LoggingMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
+
 ]
 
 ROOT_URLCONF = 'store.urls'
@@ -189,4 +199,18 @@ CACHES = {
         }
     },
 
+}
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': [
+            'user',
+        ],
+    }
 }
