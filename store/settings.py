@@ -174,7 +174,7 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULE = {
     'send-weekly-best-products-email': {
         'task': 'products.tasks.weekly_best_products_email_task',
-        'schedule': crontab(hour=0, minute=0, day_of_week='mon'),  # Every Monday at midnight
+        'schedule': crontab(hour=7, minute=0, day_of_week='wed'),  # Every Wed at 7 am
         # 'schedule': crontab(minute='*/5'),  # Every 5 min
     },
 
