@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'crispy_forms',
     'django_filters',
+    'django_celery_beat',
     'products',
     'users',
     'api', 
@@ -154,3 +157,25 @@ REST_FRAMEWORK = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULE = {
+    'send-weekly-best-products-email': {
+        'task': 'products.tasks.weekly_best_products_email_task',
+        # 'schedule': crontab(hour=0, minute=0, day_of_week='mon'),  # Every Monday at midnight
+        'schedule': crontab(minute='*/5'),  # Every 5 min
+    },
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mailhog'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = 'store@gmail.com'
+EMAIL_HOST_PASSWORD = ''
+
