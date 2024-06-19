@@ -1,0 +1,16 @@
+<!-- templates/emails/weekly_best_products.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Лучшие товары недели</title>
+</head>
+<body>
+<h1>Здравствуйте, {{ user.username }}!</h1>
+<p>Вот лучшие товары этой недели:</p>
+<ul>
+    {% for product in products %}
+    <li>{{ product.name }} - {{ product.price }}</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
